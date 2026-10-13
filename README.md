@@ -1,63 +1,85 @@
 # Cost-Aware LLM Router
 
-A backend system that routes incoming queries to cost-effective language models while maintaining an acceptable level of response quality.
+A system that routes queries to cost-effective language models while maintaining an acceptable level of response quality.
 
 ## Problem
 
-Using the most powerful language model for every request can increase inference costs unnecessarily. Many requests may be handled adequately by cheaper models.
+Using the most powerful language model for every request can increase inference costs unnecessarily. Many queries can potentially be handled by cheaper models.
 
-This project explores whether intelligent model selection can reduce costs without significantly compromising response quality.
+This project explores whether intelligent model selection can reduce inference costs without significantly compromising answer quality.
 
-## Goals
+## Project Goals
 
 * Integrate multiple language models through a common interface.
 * Establish an always-use-the-strongest-model baseline.
-* Develop routing strategies that select models based on query characteristics.
-* Measure model costs and response quality.
-* Compare routing strategies against the baseline using a reproducible evaluation dataset.
+* Develop routing strategies based on query characteristics.
+* Measure inference costs, response quality, and latency.
+* Compare routing strategies using a reproducible evaluation dataset.
 * Evaluate the trade-off between cost savings and answer quality.
 
 ## Technology Stack
 
-* Python
-* FastAPI
-* Pydantic
-* LiteLLM
-* SQLite
-* pytest
-* scikit-learn
-* Streamlit
+* **Language:** Python
+* **API:** FastAPI
+* **Validation:** Pydantic
+* **LLM integration:** LiteLLM
+* **Configuration:** Pydantic Settings
+* **Testing:** pytest, pytest-asyncio
+* **Dependency management:** uv
 
-Some components will be introduced as the project develops.
+Planned technologies include SQLite for persistence, scikit-learn for learned routing, and Streamlit for benchmark visualization.
 
-## Development Setup
+## Current Implementation
 
-Install [uv](https://docs.astral.sh/uv/), then clone the repository and navigate to its root directory.
+### Implemented
 
-Sync the project dependencies:
+* FastAPI application with a health endpoint.
+* Standardized Pydantic response schema for model outputs.
+* LiteLLM-based asynchronous model execution.
+* Response normalization for generated text, model identity, provider identity, token usage, and latency.
+* Handling of unavailable token usage information.
+* Unit tests using mocked model responses.
 
-```bash
-uv sync
+### In Progress
+
+* Model execution service.
+* Integration with real model providers.
+* Multi-model evaluation and benchmarking.
+* Rule-based and learned routing strategies.
+
+The provider tests currently use mocked responses. Successful tests do not yet establish that real external model calls work.
+
+## Project Structure
+
+```text
+app/
+├── api/
+├── core/
+├── providers/
+│   └── litellm_provider.py
+├── schemas/
+│   └── llm.py
+├── services/
+├── main.py
+tests/
+├── test_main.py
+├── test_schemas.py
+└── test_litellm_provider.py
+datasets/
+scripts/
+pyproject.toml
+uv.lock
 ```
 
-Start the development server:
+Some directories are reserved for components that will be implemented in later phases.
 
-```bash
-uv run uvicorn app.main:app --reload
-```
+## Getting Started
 
-The API documentation is available at `http://127.0.0.1:8000/docs`.
+### Prerequisites
 
-The health endpoint is available at `http://127.0.0.1:8000/health`.
+* Python compatible with the version specified in `.python-version`
+* [uv](https://docs.astral.sh/uv/)
 
-## Tests
+### Install Dependencies
 
-Run the test suite:
-
-```bash
-uv run pytest
-```
-
-## Project Status
-
-The initial FastAPI application and health endpoint are implemented. Model integration, routing strategies, evaluation, and benchmarking will be developed in subsequent phases.
+Clone the repository and navigate
