@@ -33,12 +33,14 @@ Planned technologies include SQLite for persistence, scikit-learn for learned ro
 
 ### Implemented
 
-* FastAPI application with a health endpoint.
-* Standardized Pydantic response schema for model outputs.
-* LiteLLM-based asynchronous model execution.
-* Response normalization for generated text, model identity, provider identity, token usage, and latency.
-* Handling of unavailable token usage information.
-* Unit tests using mocked model responses.
+* FastAPI application with a health-check endpoint.
+* Pydantic schema for normalized LLM responses, including token usage and latency.
+* LiteLLM provider layer for asynchronous model execution.
+* Model service that delegates generation requests to the provider.
+* Unit tests using mocked model responses to verify provider and service behavior.
+
+**Note:** Model execution is currently tested using mocks. Real API-provider integration and benchmark evaluation are planned for later phases.
+
 
 ### In Progress
 
@@ -60,11 +62,13 @@ app/
 ├── schemas/
 │   └── llm.py
 ├── services/
+    └── model_service.py
 ├── main.py
 tests/
 ├── test_main.py
 ├── test_schemas.py
-└── test_litellm_provider.py
+├── test_litellm_provider.py
+└── test_model_service.py
 datasets/
 scripts/
 pyproject.toml
