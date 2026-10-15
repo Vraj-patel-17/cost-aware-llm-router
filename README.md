@@ -29,18 +29,22 @@ This project explores whether intelligent model selection can reduce inference c
 
 Planned technologies include SQLite for persistence, scikit-learn for learned routing, and Streamlit for benchmark visualization.
 
-## Current Implementation
-
-### Implemented
+### Current Implementation
 
 * FastAPI application with a health-check endpoint.
+* Centralized configuration using Pydantic Settings.
 * Pydantic schema for normalized LLM responses, including token usage and latency.
-* LiteLLM provider layer for asynchronous model execution.
+* Asynchronous model execution through LiteLLM.
 * Model service that delegates generation requests to the provider.
-* Unit tests using mocked model responses to verify provider and service behavior.
-* Centralized application configuration using Pydantic Settings, with environment-based overrides and sensible defaults.
-**Note:** Model execution is currently tested using mocks. Real API-provider integration and benchmark evaluation are planned for later phases.
+* Gemini API integration verified with a successful real model call.
+* Automated tests using mocked responses to verify provider behavior, API-key forwarding, configuration, and service delegation.
 
+### Current Limitations
+
+* Only Gemini integration has been verified against a real API.
+* Automated tests use mocked model responses and do not require API credentials.
+* The routing algorithm and cost-aware model selection are not implemented yet.
+* Cost tracking, benchmark evaluation, caching, and fallback handling remain planned features.
 
 ### In Progress
 
@@ -64,6 +68,9 @@ app/
 ├── services/
 │   └── model_service.py
 └── main.py
+scripts/
+├── __init__.py
+└── smoke_test_gemini.py
 tests/
 ├── test_main.py
 ├── test_schemas.py

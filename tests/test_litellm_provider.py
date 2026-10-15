@@ -1,6 +1,7 @@
 from types import SimpleNamespace
 from unittest.mock import patch,AsyncMock
 import pytest
+import asyncio
 from app.providers.litellm_provider import LiteLLMProvider
 @pytest.mark.asyncio
 async def test_generate_returns_normalized_response():
@@ -48,3 +49,37 @@ async def test_generate_handles_missing_usage():
     assert result.text == "Hello!"
     assert result.input_tokens is None
     assert result.output_tokens is None
+
+def test_generate_forwards_api_key():
+    mock_response = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(content="Hello!")
+            )
+        ],
+        usage=None,
+    )
+
+    provider = LiteLLMProvider(
+        provider="gemini",
+        api_key="test-api-key",
+    )
+
+    async def run_test():
+        with patch(
+            "app.providers.litellm_provider.litellm.acompletion",
+            new_callable=AsyncMock,
+            return_value=mock_response,
+        ) as mock_completion:
+            await provider.generate(
+                prompt="Say hello.",
+                model="gemini/gemini-3.5-flash-lite",
+            )
+
+            mock_completion.assert_awaited_once_with(
+                model="gemini/gemini-3.5-flash-lite",
+                messages=[{"role": "user", "content": "Say hello."}],
+                api_key="test-api-key",
+            )
+
+    asyncio.run(run_test())
