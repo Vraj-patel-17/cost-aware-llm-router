@@ -38,7 +38,7 @@ Planned technologies include SQLite for persistence, scikit-learn for learned ro
 * LiteLLM provider layer for asynchronous model execution.
 * Model service that delegates generation requests to the provider.
 * Unit tests using mocked model responses to verify provider and service behavior.
-
+* Centralized application configuration using Pydantic Settings, with environment-based overrides and sensible defaults.
 **Note:** Model execution is currently tested using mocks. Real API-provider integration and benchmark evaluation are planned for later phases.
 
 
@@ -55,20 +55,21 @@ The provider tests currently use mocked responses. Successful tests do not yet e
 
 ```text
 app/
-├── api/
 ├── core/
+│   └── config.py
 ├── providers/
 │   └── litellm_provider.py
 ├── schemas/
 │   └── llm.py
 ├── services/
-    └── model_service.py
-├── main.py
+│   └── model_service.py
+└── main.py
 tests/
 ├── test_main.py
 ├── test_schemas.py
 ├── test_litellm_provider.py
-└── test_model_service.py
+├── test_model_service.py
+└── test_config.py
 datasets/
 scripts/
 pyproject.toml
