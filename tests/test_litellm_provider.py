@@ -83,3 +83,44 @@ def test_generate_forwards_api_key():
             )
 
     asyncio.run(run_test())
+
+@pytest.mark.asyncio
+async def test_groq_provider_forwards_api_key():
+    mock_response = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(content="Hello from Groq!")
+            )
+        ],
+        usage=SimpleNamespace(
+            prompt_tokens=5,
+            completion_tokens=3,
+        ),
+    )
+
+    provider = LiteLLMProvider(
+        provider="groq",
+        api_key="test-groq-api-key",
+    )
+
+    with patch(
+        "app.providers.litellm_provider.litellm.acompletion",
+        new_callable=AsyncMock,
+        return_value=mock_response,
+    ) as mock_completion:
+        result = await provider.generate(
+            prompt="Say hello.",
+            model="groq/gpt-oss-20b",
+        )
+
+    mock_completion.assert_awaited_once_with(
+        model="groq/gpt-oss-20b",
+        messages=[{"role": "user", "content": "Say hello."}],
+        api_key="test-groq-api-key",
+    )
+
+    assert result.provider == "groq"
+    assert result.model == "groq/gpt-oss-20b"
+    assert result.text == "Hello from Groq!"
+    assert result.input_tokens == 5
+    assert result.output_tokens == 3

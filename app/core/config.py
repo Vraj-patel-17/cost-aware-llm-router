@@ -5,6 +5,8 @@ class Settings(BaseSettings):
 
     gemini_api_key: str | None = None
     gemini_model: str = "gemini/gemini-3.5-flash-lite"
+    groq_api_key:str | None = None
+    groq_model: str = "groq/openai/gpt-oss-120b"
     model_config=SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
