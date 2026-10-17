@@ -16,4 +16,5 @@ async def test_generate_delegates_to_provider():
     fake_provider.generate.return_value = except_response
     service = ModelService(provider=fake_provider)
     result = await service.generate(prompt="Hello, world!", model="test-model")
+    fake_provider.generate.assert_awaited_once_with(prompt="Hello, world!",model="test-model",)
     assert result is except_response

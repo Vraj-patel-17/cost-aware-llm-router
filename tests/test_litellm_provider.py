@@ -12,7 +12,7 @@ async def test_generate_returns_normalized_response():
     with patch("app.providers.litellm_provider.litellm.acompletion",
         new_callable=AsyncMock, return_value=mock_response) as mock_acompletion:
         result = await provider.generate(prompt="Hello!", model="gemini-test-model")
-        mock_acompletion.assert_called_once_with(
+        mock_acompletion.assert_awaited_once_with(
             model="gemini-test-model",
             messages=[{"role": "user", "content": "Hello!"}],
         )
@@ -124,3 +124,26 @@ async def test_groq_provider_forwards_api_key():
     assert result.text == "Hello from Groq!"
     assert result.input_tokens == 5
     assert result.output_tokens == 3
+
+@pytest.mark.asyncio
+async def test_generate_handles_empty_choices():
+    mock_response = SimpleNamespace(
+        choices=[],
+        usage=None,
+    )
+
+    provider = LiteLLMProvider(provider="gemini")
+
+    with patch(
+        "app.providers.litellm_provider.litellm.acompletion",
+        new_callable=AsyncMock,
+        return_value=mock_response,
+    ):
+        result = await provider.generate(
+            prompt="Hello!",
+            model="gemini-test-model",
+        )
+
+    assert result.text == ""
+    assert result.input_tokens is None
+    assert result.output_tokens is None
