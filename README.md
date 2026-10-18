@@ -31,20 +31,24 @@ Planned technologies include SQLite for persistence, scikit-learn for learned ro
 
 ### Current Implementation
 
-* FastAPI application with a health-check endpoint.
+* FastAPI application with health-check and model-generation endpoints.
 * Centralized configuration using Pydantic Settings.
-* Pydantic schema for normalized LLM responses, including token usage and latency.
+* Centralized model registry mapping configured model IDs to their providers and API keys.
+* Explicit model selection through the API using registered model IDs.
+* Pydantic schemas for request validation and normalized LLM responses, including token usage and latency.
 * Asynchronous model execution through LiteLLM.
 * Model service that delegates generation requests to the provider.
 * Gemini API integration verified with a successful real model call.
 * Groq API integration verified with a real model call.
-* Automated tests using mocked responses to verify provider behavior, API-key forwarding, configuration, and service delegation.
+* Automated tests using mocked responses to verify API behavior, model registration, provider behavior, API-key forwarding, configuration, and service delegation.
 
 ### Current Limitations
+
 * Only Gemini and Groq integrations have been verified against real APIs.
 * Automated tests use mocked model responses and do not require API credentials.
-* The routing algorithm and cost-aware model selection are not implemented yet.
+* Model selection is explicit; the cost-aware routing algorithm has not been implemented.
 * Cost tracking, benchmark evaluation, caching, and fallback handling remain planned features.
+
 ### Evaluation Plan
 
 The project's effectiveness will be evaluated against an always-use-the-strongest-model baseline.
