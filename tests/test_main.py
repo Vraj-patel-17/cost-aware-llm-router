@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 
 from app.core.config import settings
 from app.main import app
+from app.main import get_model_service
 
 client = TestClient(app)
 
@@ -97,3 +98,24 @@ def test_generate_handles_provider_failure():
     assert response.json()["detail"] == (
         "The model provider request failed."
     )
+@pytest.mark.parametrize(
+    ("model_name", "expected_provider", "expected_api_key"),
+    [
+        (settings.gemini_model, "gemini", settings.gemini_api_key),
+        (settings.groq_model, "groq", settings.groq_api_key),
+    ],
+)
+def test_get_model_service_uses_registry(
+    model_name,
+    expected_provider,
+    expected_api_key,
+):
+    with patch("app.main.LiteLLMProvider") as mock_provider:
+        service = get_model_service(model_name)
+
+    mock_provider.assert_called_once_with(
+        provider=expected_provider,
+        api_key=expected_api_key,
+    )
+
+    assert service.provider is mock_provider.return_value

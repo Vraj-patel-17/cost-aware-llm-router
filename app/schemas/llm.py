@@ -14,3 +14,4 @@ class LLMResponse(BaseModel):
     input_tokens: int | None = Field(default=None, ge=0)
     output_tokens: int | None = Field(default=None, ge=0)
     latency_ms: float | None = Field(default=None, ge=0.0)
+    estimated_cost_usd: float | None = Field(default=None, ge=0.0)
