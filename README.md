@@ -41,6 +41,12 @@ Planned technologies include SQLite for persistence, scikit-learn for learned ro
 * Gemini API integration verified with a successful real model call.
 * Groq API integration verified with a real model call.
 * Automated tests using mocked responses to verify API behavior, model registration, provider behavior, API-key forwarding, configuration, and service delegation.
+* Provider-independent cost estimation using configurable model pricing.
+* Separate input and output token pricing, expressed in USD per million tokens.
+* Estimated cost included in normalized model responses when pricing and token usage are available.
+* Graceful handling of unknown model pricing and missing token usage.
+* Automated tests for cost calculations, including known pricing, zero-token usage, and unknown models.
+
 
 ### Current Limitations
 
@@ -48,6 +54,10 @@ Planned technologies include SQLite for persistence, scikit-learn for learned ro
 * Automated tests use mocked model responses and do not require API credentials.
 * Model selection is explicit; the cost-aware routing algorithm has not been implemented.
 * Cost tracking, benchmark evaluation, caching, and fallback handling remain planned features.
+* Model pricing is not yet populated with verified rates for the configured models.
+* Estimated costs do not necessarily represent actual provider charges, free-tier allowances, or discounts.
+* Persistent usage logging, cost aggregation, and benchmarking are not implemented yet.
+
 
 ### Evaluation Plan
 
