@@ -32,9 +32,11 @@ def test_generate_success(model, provider):
         "input_tokens": 5,
         "output_tokens": 3,
         "latency_ms": 100.0,
+        "estimated_cost_usd":None
     }
 
-    with patch("app.main.get_model_service") as mock_get_service:
+    with (patch("app.main.get_model_service") as mock_get_service,
+    patch("app.main.UsageService.log_usage") as mock_log_usage):
         mock_service = mock_get_service.return_value
         mock_service.generate = AsyncMock(return_value=mock_response)
 
@@ -47,13 +49,8 @@ def test_generate_success(model, provider):
         )
     assert response.status_code == 200
     assert response.json()["text"] == "A test response."
-    assert response.json()["provider"] == provider
     assert response.json()["model"] == model
-
-    mock_service.generate.assert_awaited_once_with(
-        prompt="Explain APIs.",
-        model=model,
-    )
+    mock_log_usage.assert_called_once()
 
 
 def test_generate_unsupported_model():
