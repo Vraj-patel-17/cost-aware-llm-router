@@ -6,6 +6,8 @@ from app.core.dependencies import get_db
 from app.core.database import Base, engine
 from app.core.model_registry import MODEL_REGISTRY
 from app.models.usage_log import UsageLog
+from app.schemas.analytics import AnalyticsSummary
+from app.services.analytics_service import AnalyticsService
 from app.providers.litellm_provider import LiteLLMProvider
 from app.schemas.llm import LLMRequest, LLMResponse
 from app.services.model_service import ModelService
@@ -76,3 +78,11 @@ async def generate(
         ) from exc
 
     return response
+
+@app.get("/analytics/summary", response_model=AnalyticsSummary)
+def get_analytics_summary(
+    db: Session = Depends(get_db),
+) -> AnalyticsSummary:
+    analytics_service = AnalyticsService(db)
+    summary = analytics_service.get_summary()
+    return AnalyticsSummary(**summary)

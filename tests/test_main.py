@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
+
 from app.core.config import settings
 from app.main import app
 from app.main import get_model_service
@@ -116,3 +117,40 @@ def test_get_model_service_uses_registry(
     )
 
     assert service.provider is mock_provider.return_value
+
+def test_analytics_summary_success():
+    mock_summary = {
+        "total_requests": 10,
+        "total_input_tokens": 1500,
+        "total_output_tokens": 800,
+        "total_estimated_cost_usd": 0.025,
+        "average_latency_ms": 250.0,
+    }
+
+    with patch(
+        "app.main.AnalyticsService.get_summary",
+        return_value=mock_summary,
+    ):
+        response = client.get("/analytics/summary")
+
+    assert response.status_code == 200
+    assert response.json() == mock_summary
+
+
+def test_analytics_summary_empty_database():
+    mock_summary = {
+        "total_requests": 0,
+        "total_input_tokens": 0,
+        "total_output_tokens": 0,
+        "total_estimated_cost_usd": None,
+        "average_latency_ms": None,
+    }
+
+    with patch(
+        "app.main.AnalyticsService.get_summary",
+        return_value=mock_summary,
+    ):
+        response = client.get("/analytics/summary")
+
+    assert response.status_code == 200
+    assert response.json() == mock_summary
