@@ -33,93 +33,116 @@ Planned technologies include SQLite for persistence, scikit-learn for learned ro
 
 * FastAPI application with health-check and model-generation endpoints.
 * Centralized configuration using Pydantic Settings.
-* Centralized model registry mapping configured model IDs to their providers and API keys.
-* Explicit model selection through the API using registered model IDs.
-* Pydantic schemas for request validation and normalized LLM responses, including token usage and latency.
+* Model registry mapping supported model IDs to providers and API keys.
+* Explicit model selection through registered model IDs.
 * Asynchronous model execution through LiteLLM.
-* Model service that delegates generation requests to the provider.
-* Gemini API integration verified with a successful real model call.
-* Groq API integration verified with a real model call.
-* Automated tests using mocked responses to verify API behavior, model registration, provider behavior, API-key forwarding, configuration, and service delegation.
-* Provider-independent cost estimation using configurable model pricing.
-* Separate input and output token pricing, expressed in USD per million tokens.
-* Estimated cost included in normalized model responses when pricing and token usage are available.
-* Graceful handling of unknown model pricing and missing token usage.
-* Automated tests for cost calculations, including known pricing, zero-token usage, and unknown models.
-
+* Normalized responses containing model output, provider, token usage, latency, and estimated cost when available.
+* Gemini and Groq integrations verified through real API calls.
+* Provider-independent cost estimation using configurable input and output token prices.
+* SQLite persistence for model usage records, including model, provider, token usage, latency, estimated cost, and timestamp.
+* Aggregate usage analytics through `GET /analytics/summary`.
+* Per-model usage analytics through `GET /analytics/models`.
+* Automated tests covering API behavior, model registration, cost calculations, usage persistence, and analytics aggregation.
 
 ### Current Limitations
 
+* Model selection is explicit; automatic cost-aware routing has not been implemented.
 * Only Gemini and Groq integrations have been verified against real APIs.
-* Automated tests use mocked model responses and do not require API credentials.
-* Model selection is explicit; the cost-aware routing algorithm has not been implemented.
-* Cost tracking, benchmark evaluation, caching, and fallback handling remain planned features.
-* Model pricing is not yet populated with verified rates for the configured models.
-* Estimated costs do not necessarily represent actual provider charges, free-tier allowances, or discounts.
-* Persistent usage logging, cost aggregation, and benchmarking are not implemented yet.
-
+* Automated tests use mocked responses where appropriate and do not require live API credentials.
+* Model pricing has not yet been populated with verified rates for the configured models.
+* Estimated costs may differ from actual provider charges due to free-tier allowances, discounts, and billing rules.
+* Usage data is stored locally in SQLite.
+* A reproducible benchmark, response-quality evaluation, caching, and fallback handling have not yet been implemented.
 
 ### Evaluation Plan
 
-The project's effectiveness will be evaluated against an always-use-the-strongest-model baseline.
+The project will be evaluated against an always-use-the-strongest-model baseline.
 
-The planned benchmark will cover different query categories, including simple questions, reasoning, coding, and information extraction.
+The benchmark will cover different query categories, including simple questions, reasoning, coding, and information extraction.
 
 Key evaluation metrics:
 
-Response quality: Correctness and task-specific answer quality.
-Inference cost: Estimated cost per request and across the evaluation dataset.
-Latency: Time required to generate a response.
-Cost savings: Reduction in estimated inference costs relative to the baseline.
-Quality retention: How much response quality is preserved after introducing routing.
+* **Response quality:** Correctness and task-specific answer quality.
+* **Inference cost:** Estimated cost per request and across the evaluation dataset.
+* **Latency:** Time required to generate a response.
+* **Cost savings:** Reduction in estimated inference costs relative to the baseline.
+* **Quality retention:** How much response quality is preserved after introducing routing.
 
-The objective is to quantify the trade-off between inference cost and response quality rather than assuming that a cheaper model is always sufficient.
+The objective is to quantify the trade-off between inference cost and response quality rather than assume that cheaper models are always sufficient.
 
-Project Status
+### Project Status
 
-Current phase: Multi-provider model execution.
+**Current phase:** Usage tracking and analytics.
 
-Gemini and Groq have been integrated through LiteLLM, and their real API calls have been verified. Automated tests cover the existing provider and service behavior.
+The project currently supports model execution through LiteLLM, a configurable model registry, cost-estimation logic, SQLite usage logging, and aggregate and per-model analytics.
 
-The next milestones are to establish the model execution interface, implement routing strategies, and build a reproducible benchmark for evaluating cost and quality.
-### In Progress
+The next milestones are to configure verified model prices, build a reproducible benchmark, and implement and evaluate cost-aware routing strategies.
 
-* Model execution service.
-* Integration with real model providers.
-* Multi-model evaluation and benchmarking.
-* Rule-based and learned routing strategies.
+### Roadmap
 
-The provider tests currently use mocked responses. Successful tests do not yet establish that real external model calls work.
+* [x] FastAPI foundation and health endpoint
+* [x] Multi-provider model execution through LiteLLM
+* [x] Configurable model registry
+* [x] Provider-independent cost-estimation logic
+* [x] Persistent usage logging with SQLite
+* [x] Aggregate usage analytics
+* [x] Per-model usage analytics
+* [ ] Configure verified pricing for supported models
+* [ ] Build a reproducible benchmark dataset
+* [ ] Establish an always-use-the-strongest-model baseline
+* [ ] Implement rule-based routing
+* [ ] Evaluate a learned routing strategy
+* [ ] Add response caching and fallback handling
+* [ ] Build a Streamlit analytics dashboard
+* [ ] Improve deployment and CI/CD
+
+## API Endpoints
+
+| Method | Endpoint             | Purpose                                      |
+| ------ | -------------------- | -------------------------------------------- |
+| GET    | `/health`            | Check API health                             |
+| POST   | `/generate`          | Generate a response using a configured model |
+| GET    | `/analytics/summary` | Retrieve aggregate usage metrics             |
+| GET    | `/analytics/models`  | Retrieve usage metrics grouped by model      |
 
 ## Project Structure
 
 ```text
-Project Structure
 app/
 ├── core/
-│   └── config.py
+│   ├── config.py
+│   ├── database.py
+│   ├── dependencies.py
+│   └── model_registry.py
+├── models/
+│   └── usage_log.py
 ├── providers/
 │   └── litellm_provider.py
 ├── schemas/
-│   └── llm.py
+│   ├── llm.py
+│   ├── analytics.py
+│   └── model_analytics.py
 ├── services/
-│   └── model_service.py
+│   ├── model_service.py
+│   ├── cost_service.py
+│   ├── usage_service.py
+│   └── analytics_service.py
 └── main.py
 
 scripts/
-├── __init__.py
 ├── smoke_test_gemini.py
 └── smoke_test_groq.py
 
 tests/
-├── __init__.py
 ├── test_main.py
 ├── test_schemas.py
 ├── test_litellm_provider.py
 ├── test_model_service.py
-└── test_config.py
-
-datasets/
+├── test_config.py
+├── test_model_registry.py
+├── test_cost_service.py
+├── test_usage_service.py
+└── test_analytics_service.py
 
 pyproject.toml
 uv.lock
@@ -128,6 +151,7 @@ uv.lock
 .gitignore
 README.md
 ```
+
 
 Some directories are reserved for components that will be implemented in later phases.
 

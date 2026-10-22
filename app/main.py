@@ -12,6 +12,7 @@ from app.providers.litellm_provider import LiteLLMProvider
 from app.schemas.llm import LLMRequest, LLMResponse
 from app.services.model_service import ModelService
 from app.services.usage_service import UsageService
+from app.schemas.model_analytics import ModelAnalytics
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -86,3 +87,15 @@ def get_analytics_summary(
     analytics_service = AnalyticsService(db)
     summary = analytics_service.get_summary()
     return AnalyticsSummary(**summary)
+
+@app.get("/analytics/models", response_model=list[ModelAnalytics])
+def get_model_analytics(
+    db: Session = Depends(get_db),
+) -> list[ModelAnalytics]:
+    analytics_service = AnalyticsService(db)
+    results = analytics_service.get_model_summary()
+
+    return [
+        ModelAnalytics(**result)
+        for result in results
+    ]

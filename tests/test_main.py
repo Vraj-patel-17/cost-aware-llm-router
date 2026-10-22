@@ -154,3 +154,45 @@ def test_analytics_summary_empty_database():
 
     assert response.status_code == 200
     assert response.json() == mock_summary
+
+def test_model_analytics_success():
+    mock_results = [
+        {
+            "model": "gemini/test-model",
+            "provider": "gemini",
+            "total_requests": 5,
+            "total_input_tokens": 500,
+            "total_output_tokens": 250,
+            "total_estimated_cost_usd": 0.005,
+            "average_latency_ms": 200.0,
+        },
+        {
+            "model": "groq/test-model",
+            "provider": "groq",
+            "total_requests": 3,
+            "total_input_tokens": 300,
+            "total_output_tokens": 150,
+            "total_estimated_cost_usd": None,
+            "average_latency_ms": 150.0,
+        },
+    ]
+
+    with patch(
+        "app.main.AnalyticsService.get_model_summary",
+        return_value=mock_results,
+    ):
+        response = client.get("/analytics/models")
+
+    assert response.status_code == 200
+    assert response.json() == mock_results
+
+
+def test_model_analytics_empty_database():
+    with patch(
+        "app.main.AnalyticsService.get_model_summary",
+        return_value=[],
+    ):
+        response = client.get("/analytics/models")
+
+    assert response.status_code == 200
+    assert response.json() == []
