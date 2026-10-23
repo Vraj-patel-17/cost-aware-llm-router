@@ -39,9 +39,11 @@ Planned technologies include SQLite for persistence, scikit-learn for learned ro
 * Normalized responses containing model output, provider, token usage, latency, and estimated cost when available.
 * Gemini and Groq integrations verified through real API calls.
 * Provider-independent cost estimation using configurable input and output token prices.
+* Configured and tested pricing entries for Gemini 3.5 Flash Lite and Groq GPT-OSS 120B.
 * SQLite persistence for model usage records, including model, provider, token usage, latency, estimated cost, and timestamp.
 * Aggregate usage analytics through `GET /analytics/summary`.
 * Per-model usage analytics through `GET /analytics/models`.
+* Verified usage persistence and data flow into aggregate and per-model analytics using an isolated in-memory SQLite database.
 * Automated tests covering API behavior, model registration, cost calculations, usage persistence, and analytics aggregation.
 
 ### Current Limitations
@@ -49,7 +51,7 @@ Planned technologies include SQLite for persistence, scikit-learn for learned ro
 * Model selection is explicit; automatic cost-aware routing has not been implemented.
 * Only Gemini and Groq integrations have been verified against real APIs.
 * Automated tests use mocked responses where appropriate and do not require live API credentials.
-* Model pricing has not yet been populated with verified rates for the configured models.
+* Configured prices are estimates based on the supplied published rates and should be rechecked when provider pricing changes.
 * Estimated costs may differ from actual provider charges due to free-tier allowances, discounts, and billing rules.
 * Usage data is stored locally in SQLite.
 * A reproducible benchmark, response-quality evaluation, caching, and fallback handling have not yet been implemented.

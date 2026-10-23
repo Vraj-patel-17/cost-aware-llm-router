@@ -47,3 +47,25 @@ def test_returns_none_for_unknown_model():
     )
 
     assert result is None
+def test_gemini_flash_lite_pricing():
+    from app.services.cost_service import calculate_cost
+
+    cost = calculate_cost(
+        model="gemini/gemini-3.5-flash-lite",
+        input_tokens=1000,
+        output_tokens=500,
+    )
+
+    assert cost == 0.00155
+
+
+def test_groq_gpt_oss_120b_pricing():
+    from app.services.cost_service import calculate_cost
+
+    cost = calculate_cost(
+        model="groq/openai/gpt-oss-120b",
+        input_tokens=1000,
+        output_tokens=500,
+    )
+
+    assert cost == 0.00045
