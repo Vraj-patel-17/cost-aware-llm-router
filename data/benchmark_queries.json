@@ -1,0 +1,218 @@
+[
+    {
+        "id": "simple_001",
+        "category": "simple",
+        "prompt": "Explain what an API is in exactly two sentences.",
+        "evaluation_criteria": [
+            "Correctly explains that an API enables software systems to communicate",
+            "Provides a clear, beginner-friendly explanation",
+            "Uses exactly two sentences"
+        ]
+    },
+    {
+        "id": "simple_002",
+        "category": "simple",
+        "prompt": "Explain the difference between a list and a tuple in Python in no more than three bullet points.",
+        "evaluation_criteria": [
+            "Explains that lists are mutable and tuples are immutable",
+            "Accurately describes their basic syntax",
+            "Uses no more than three bullet points"
+        ]
+    },
+    {
+        "id": "simple_003",
+        "category": "simple",
+        "prompt": "What is the purpose of version control in software development? Answer in two sentences.",
+        "evaluation_criteria": [
+            "Explains that version control tracks changes to files",
+            "Mentions collaboration or the ability to review and restore earlier versions",
+            "Uses exactly two sentences"
+        ]
+    },
+    {
+        "id": "simple_004",
+        "category": "simple",
+        "prompt": "Explain the difference between supervised and unsupervised machine learning in simple language.",
+        "evaluation_criteria": [
+            "Explains that supervised learning uses labeled training data",
+            "Explains that unsupervised learning works with unlabeled data to identify patterns or structure",
+            "Clearly distinguishes the two approaches"
+        ]
+    },
+    {
+        "id": "simple_005",
+        "category": "simple",
+        "prompt": "What does HTTP status code 404 mean? Answer in one sentence.",
+        "evaluation_criteria": [
+            "Correctly identifies 404 as Not Found",
+            "Explains that the requested resource could not be found",
+            "Uses exactly one sentence"
+        ]
+    },
+    {
+        "id": "reasoning_001",
+        "category": "reasoning",
+        "prompt": "A shop offers a 20% discount on an item priced at ₹500. Calculate the discount and the final price.",
+        "evaluation_criteria": [
+            "Calculates the discount as ₹100",
+            "Calculates the final price as ₹400",
+            "Distinguishes the discount amount from the final price"
+        ]
+    },
+    {
+        "id": "reasoning_002",
+        "category": "reasoning",
+        "prompt": "A car travels 150 km in 3 hours at a constant speed. How far will it travel in 5 hours at the same speed? Show the calculation.",
+        "evaluation_criteria": [
+            "Calculates the speed as 50 km/h",
+            "Calculates the distance as 250 km",
+            "Shows a mathematically correct calculation"
+        ]
+    },
+    {
+        "id": "reasoning_003",
+        "category": "reasoning",
+        "prompt": "A student scores 72, 85, and 93 on three equally weighted tests. Calculate the average score and show the calculation.",
+        "evaluation_criteria": [
+            "Adds the scores correctly to obtain 250",
+            "Divides the total by 3",
+            "Reports the average as approximately 83.33"
+        ]
+    },
+    {
+        "id": "reasoning_004",
+        "category": "reasoning",
+        "prompt": "A server processes 120 requests in 4 seconds at a constant rate. How many requests can it process in 15 seconds? Assume no overhead or change in processing rate.",
+        "evaluation_criteria": [
+            "Calculates the processing rate as 30 requests per second",
+            "Calculates the total as 450 requests",
+            "Uses the constant-rate assumption correctly"
+        ]
+    },
+    {
+        "id": "reasoning_005",
+        "category": "reasoning",
+        "prompt": "A dataset contains 80 samples. Of these, 25% belong to class A and the rest belong to class B. How many samples belong to each class?",
+        "evaluation_criteria": [
+            "Calculates class A as 20 samples",
+            "Calculates class B as 60 samples",
+            "Ensures both class counts sum to 80"
+        ]
+    },
+    {
+        "id": "coding_001",
+        "category": "coding",
+        "prompt": "Write a Python function named is_prime(n) that returns True if n is a prime number and False otherwise. Handle integers less than 2 correctly.",
+        "evaluation_criteria": [
+            "Defines a function named is_prime",
+            "Returns False for integers less than 2",
+            "Correctly identifies prime and composite integers",
+            "Uses a valid and reasonably efficient primality check",
+            "Returns a Boolean value"
+        ]
+    },
+    {
+        "id": "coding_002",
+        "category": "coding",
+        "prompt": "Write a Python function named remove_duplicates(items) that removes duplicate elements from a list while preserving their original order.",
+        "evaluation_criteria": [
+            "Defines a function named remove_duplicates",
+            "Removes repeated elements",
+            "Preserves the order of first occurrences",
+            "Works correctly with an empty list",
+            "Returns a list"
+        ]
+    },
+    {
+        "id": "coding_003",
+        "category": "coding",
+        "prompt": "Write a Python function named word_frequency(text) that returns a dictionary containing the frequency of each word. Treat words case-insensitively and split words on whitespace.",
+        "evaluation_criteria": [
+            "Defines a function named word_frequency",
+            "Counts each word correctly",
+            "Treats uppercase and lowercase versions of a word as equivalent",
+            "Returns a dictionary",
+            "Handles empty input"
+        ]
+    },
+    {
+        "id": "coding_004",
+        "category": "coding",
+        "prompt": "Write a Python function named binary_search(numbers, target) that searches for target in a sorted list and returns its index if found, or -1 otherwise.",
+        "evaluation_criteria": [
+            "Defines a function named binary_search",
+            "Implements binary search correctly",
+            "Returns a valid index when the target exists",
+            "Returns -1 when the target does not exist",
+            "Handles an empty list"
+        ]
+    },
+    {
+        "id": "coding_005",
+        "category": "coding",
+        "prompt": "Write a Python function named flatten_once(items) that flattens a list by one level. For example, [1, [2, 3], [4], 5] should become [1, 2, 3, 4, 5]. Do not recursively flatten nested lists.",
+        "evaluation_criteria": [
+            "Defines a function named flatten_once",
+            "Flattens nested lists by exactly one level",
+            "Preserves element order",
+            "Does not recursively flatten deeper nested lists",
+            "Handles an empty list"
+        ]
+    },
+    {
+        "id": "extraction_001",
+        "category": "extraction",
+        "prompt": "Extract the customer name, invoice date, and total amount from this invoice text. Return only a JSON object with keys customer_name, invoice_date, and total_amount. Invoice text: Customer: Asha Mehta; Invoice Date: 2026-09-12; Subtotal: ₹2,000; Tax: ₹360; Total: ₹2,360.",
+        "evaluation_criteria": [
+            "Extracts customer_name as Asha Mehta",
+            "Extracts invoice_date as 2026-09-12",
+            "Extracts total_amount as ₹2,360",
+            "Returns valid JSON with exactly the three requested keys"
+        ]
+    },
+    {
+        "id": "extraction_002",
+        "category": "extraction",
+        "prompt": "Extract the person's name, email address, and phone number. Return only a JSON object with keys name, email, and phone. Text: Please contact Rahul Shah at rahul.shah@example.com or call +91-9876543210 for further information.",
+        "evaluation_criteria": [
+            "Extracts the name as Rahul Shah",
+            "Extracts the email as rahul.shah@example.com",
+            "Extracts the phone as +91-9876543210",
+            "Returns valid JSON with exactly the three requested keys"
+        ]
+    },
+    {
+        "id": "extraction_003",
+        "category": "extraction",
+        "prompt": "Extract the product name, quantity, and unit price from this order. Return only a JSON object with keys product_name, quantity, and unit_price. Order: Product: Wireless Mouse; Quantity: 3 units; Unit price: ₹750; Total: ₹2,250.",
+        "evaluation_criteria": [
+            "Extracts product_name as Wireless Mouse",
+            "Extracts quantity as 3",
+            "Extracts unit_price as ₹750",
+            "Does not confuse unit price with total price",
+            "Returns valid JSON with exactly the three requested keys"
+        ]
+    },
+    {
+        "id": "extraction_004",
+        "category": "extraction",
+        "prompt": "Extract the meeting date, start time, and location from this message. Return only a JSON object with keys date, start_time, and location. Message: The project review meeting is scheduled for 18 November 2026 at 14:30 IST in Conference Room B.",
+        "evaluation_criteria": [
+            "Extracts the date as 18 November 2026",
+            "Extracts the start time as 14:30 IST",
+            "Extracts the location as Conference Room B",
+            "Returns valid JSON with exactly the three requested keys"
+        ]
+    },
+    {
+        "id": "extraction_005",
+        "category": "extraction",
+        "prompt": "Extract the company name, job title, and application deadline from this job announcement. Return only a JSON object with keys company_name, job_title, and application_deadline. Announcement: Acme Analytics is hiring a Junior Data Scientist. Applications must be submitted by 30 November 2026.",
+        "evaluation_criteria": [
+            "Extracts company_name as Acme Analytics",
+            "Extracts job_title as Junior Data Scientist",
+            "Extracts application_deadline as 30 November 2026",
+            "Returns valid JSON with exactly the three requested keys"
+        ]
+    }
+]
