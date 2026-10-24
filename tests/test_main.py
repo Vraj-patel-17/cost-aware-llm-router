@@ -2,14 +2,15 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
-
+from unittest.mock import AsyncMock, MagicMock
+from app.schemas.benchmark import BenchmarkQuery
+from app.schemas.benchmark_result import BenchmarkResult
 
 from app.core.config import settings
 from app.main import app
 from app.main import get_model_service
 
 client = TestClient(app)
-
 
 def test_health_check():
     response = client.get("/health")
@@ -196,3 +197,69 @@ def test_model_analytics_empty_database():
 
     assert response.status_code == 200
     assert response.json() == []
+
+def test_run_benchmark_success(monkeypatch):
+    queries = [
+        BenchmarkQuery(
+            id="simple_001",
+            category="simple",
+            prompt="What is an API?",
+            evaluation_criteria=["Explains the concept correctly"],
+        )
+    ]
+
+    results = [
+        BenchmarkResult(
+            query_id="simple_001",
+            category="simple",
+            model="gemini/gemini-3.5-flash-lite",
+            response_text="An API enables software communication.",
+            success=True,
+        )
+    ]
+
+    monkeypatch.setattr(
+        "app.main.BenchmarkService.load_queries",
+        lambda self: queries,
+    )
+
+    mock_runner = MagicMock()
+    mock_runner.run_benchmark = AsyncMock(return_value=results)
+
+    monkeypatch.setattr(
+        "app.main.BenchmarkRunner",
+        lambda model_service_factory: mock_runner,
+    )
+
+    response = client.post(
+        "/benchmark/run",
+        json=["gemini/gemini-3.5-flash-lite"],
+    )
+
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+    assert response.json()[0]["query_id"] == "simple_001"
+    mock_runner.run_benchmark.assert_awaited_once()
+
+
+def test_run_benchmark_rejects_unsupported_model():
+    response = client.post(
+        "/benchmark/run",
+        json=["unsupported/model"],
+    )
+
+    assert response.status_code == 400
+    assert "Unsupported models" in response.json()["detail"]
+
+
+def test_run_benchmark_rejects_duplicate_models():
+    response = client.post(
+        "/benchmark/run",
+        json=[
+            "gemini/gemini-3.5-flash-lite",
+            "gemini/gemini-3.5-flash-lite",
+        ],
+    )
+
+    assert response.status_code == 400
+    assert "Duplicate models" in response.json()["detail"]

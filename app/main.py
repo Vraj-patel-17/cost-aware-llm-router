@@ -13,6 +13,9 @@ from app.schemas.llm import LLMRequest, LLMResponse
 from app.services.model_service import ModelService
 from app.services.usage_service import UsageService
 from app.schemas.model_analytics import ModelAnalytics
+from app.schemas.benchmark_result import BenchmarkResult
+from app.services.benchmark_service import BenchmarkService
+from app.services.benchmark_runner import BenchmarkRunner
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -99,3 +102,38 @@ def get_model_analytics(
         ModelAnalytics(**result)
         for result in results
     ]
+
+@app.post("/benchmark/run", response_model=list[BenchmarkResult])
+async def run_benchmark(
+    model_names: list[str],
+) -> list[BenchmarkResult]:
+    unsupported_models = [
+        model for model in model_names
+        if model not in MODEL_REGISTRY
+    ]
+
+    if unsupported_models:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported models: {unsupported_models}",
+        )
+
+    if not model_names:
+        raise HTTPException(
+            status_code=400,
+            detail="At least one model must be provided.",
+        )
+
+    if len(model_names) != len(set(model_names)):
+        raise HTTPException(
+            status_code=400,
+            detail="Duplicate models are not allowed.",
+        )
+
+    queries = BenchmarkService().load_queries()
+    runner = BenchmarkRunner(model_service_factory=get_model_service)
+
+    return await runner.run_benchmark(
+        queries=queries,
+        model_names=model_names,
+    )
