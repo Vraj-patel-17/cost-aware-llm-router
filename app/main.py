@@ -16,7 +16,8 @@ from app.schemas.model_analytics import ModelAnalytics
 from app.schemas.benchmark_result import BenchmarkResult
 from app.services.benchmark_service import BenchmarkService
 from app.services.benchmark_runner import BenchmarkRunner
-
+from app.schemas.benchmark_analysis import BenchmarkAnalysis
+from app.services.benchmark_analysis_service import BenchmarkAnalysisService
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
@@ -137,3 +138,9 @@ async def run_benchmark(
         queries=queries,
         model_names=model_names,
     )
+@app.post("/benchmark/analyze", response_model=BenchmarkAnalysis)
+async def analyze_benchmark(
+    results: list[BenchmarkResult],
+) -> BenchmarkAnalysis:
+    service = BenchmarkAnalysisService()
+    return service.analyze(results)

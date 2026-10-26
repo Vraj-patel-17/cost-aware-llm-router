@@ -263,3 +263,44 @@ def test_run_benchmark_rejects_duplicate_models():
 
     assert response.status_code == 400
     assert "Duplicate models" in response.json()["detail"]
+def test_benchmark_analyze_success():
+    payload = [
+        {
+            "query_id": "q1",
+            "category": "simple",
+            "model": "gemini/test",
+            "response_text": "Answer",
+            "input_tokens": 10,
+            "output_tokens": 20,
+            "latency_ms": 100.0,
+            "estimated_cost_usd": 0.001,
+            "success": True,
+        }
+    ]
+
+    response = client.post("/benchmark/analyze", json=payload)
+
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["total_queries"] == 1
+    assert data["successful_queries"] == 1
+    assert data["failed_queries"] == 0
+    assert data["success_rate"] == 100.0
+    assert data["average_latency_ms"] == 100.0
+    assert data["total_estimated_cost_usd"] == 0.001
+    assert data["categories"]["simple"]["total_queries"] == 1
+
+
+def test_benchmark_analyze_empty_input():
+    response = client.post("/benchmark/analyze", json=[])
+
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["total_queries"] == 0
+    assert data["successful_queries"] == 0
+    assert data["failed_queries"] == 0
+    assert data["success_rate"] == 0.0
+    assert data["average_latency_ms"] is None
+    assert data["categories"] == {}
