@@ -18,6 +18,18 @@ from app.services.benchmark_service import BenchmarkService
 from app.services.benchmark_runner import BenchmarkRunner
 from app.schemas.benchmark_analysis import BenchmarkAnalysis
 from app.services.benchmark_analysis_service import BenchmarkAnalysisService
+from app.schemas.benchmark import BenchmarkQuery
+from app.schemas.benchmark_evaluation import BenchmarkEvaluation
+from app.services.benchmark_evaluation_service import (
+    BenchmarkEvaluationService,
+)
+from app.schemas.benchmark_evaluation_run import (
+    BenchmarkEvaluationRequest,
+    BenchmarkEvaluationRun,
+)
+from app.services.benchmark_evaluation_run_service import (
+    BenchmarkEvaluationRunService,
+)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
@@ -144,3 +156,51 @@ async def analyze_benchmark(
 ) -> BenchmarkAnalysis:
     service = BenchmarkAnalysisService()
     return service.analyze(results)
+@app.post(
+    "/benchmark/evaluate",
+    response_model=BenchmarkEvaluation,
+)
+async def evaluate_benchmark(
+    query: BenchmarkQuery,
+    result: BenchmarkResult,
+) -> BenchmarkEvaluation:
+    service = BenchmarkEvaluationService()
+
+    try:
+        return await service.evaluate(
+            query=query,
+            result=result,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=str(exc),
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="The evaluation provider request failed.",
+        ) from exc
+@app.post(
+    "/benchmark/evaluate-all",
+    response_model=BenchmarkEvaluationRun,
+)
+async def evaluate_all_benchmarks(
+    request: BenchmarkEvaluationRequest,
+) -> BenchmarkEvaluationRun:
+    service = BenchmarkEvaluationRunService()
+
+    try:
+        return await service.evaluate_all(request)
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=str(exc),
+        ) from exc
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="The benchmark evaluation run failed.",
+        ) from exc
