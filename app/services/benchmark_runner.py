@@ -1,5 +1,7 @@
+import asyncio
 from collections.abc import Callable
 
+from app.core.config import settings
 from app.schemas.benchmark import BenchmarkQuery
 from app.schemas.benchmark_result import BenchmarkResult
 from app.services.model_service import ModelService
@@ -9,8 +11,12 @@ class BenchmarkRunner:
     def __init__(
         self,
         model_service_factory: Callable[[str], ModelService],
+        max_concurrency: int | None = None,
     ):
         self.model_service_factory = model_service_factory
+        self.max_concurrency = (
+            max_concurrency or settings.benchmark_concurrency
+        )
 
     async def run_query(
         self,
@@ -44,21 +50,33 @@ class BenchmarkRunner:
                 model=model_name,
                 response_text="",
                 success=False,
-                error=str(exc),
+                # Some exceptions (e.g. TimeoutError) have an empty message.
+                error=str(exc) or type(exc).__name__,
             )
+
     async def run_benchmark(
         self,
         queries: list[BenchmarkQuery],
         model_names: list[str],
     ) -> list[BenchmarkResult]:
-        results: list[BenchmarkResult] = []
+        semaphore = asyncio.Semaphore(self.max_concurrency)
 
-        for model_name in model_names:
-            for query in queries:
-                result = await self.run_query(
+        async def run_limited(
+            query: BenchmarkQuery,
+            model_name: str,
+        ) -> BenchmarkResult:
+            async with semaphore:
+                return await self.run_query(
                     query=query,
                     model_name=model_name,
                 )
-                results.append(result)
 
-        return results
+        return list(
+            await asyncio.gather(
+                *(
+                    run_limited(query, model_name)
+                    for model_name in model_names
+                    for query in queries
+                )
+            )
+        )
