@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -29,3 +30,17 @@ class BenchmarkService:
             )
 
         return queries
+
+    @staticmethod
+    def dataset_hash(queries: list[BenchmarkQuery]) -> str:
+
+        canonical = json.dumps(
+            sorted(
+                (query.model_dump() for query in queries),
+                key=lambda item: item["id"],
+            ),
+            sort_keys=True,
+            ensure_ascii=False,
+        )
+
+        return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
