@@ -102,6 +102,54 @@ def validate_benchmark_models(model_names: list[str]) -> None:
         )
 
 
+def _provider_for(model: str) -> str:
+    config = MODEL_REGISTRY.get(model)
+    provider = config.get("provider") if config else None
+
+    return provider or model.split("/", 1)[0]
+
+
+def _generation_usage(results: list[BenchmarkResult]) -> list[LLMResponse]:
+    return [
+        LLMResponse(
+            text="",
+            model=result.model,
+            provider=_provider_for(result.model),
+            input_tokens=result.input_tokens,
+            output_tokens=result.output_tokens,
+            latency_ms=result.latency_ms,
+            estimated_cost_usd=result.estimated_cost_usd,
+        )
+        for result in results
+        if result.success
+    ]
+
+
+def _judge_usage(
+    evaluations: list[BenchmarkEvaluation],
+) -> list[LLMResponse]:
+    return [
+        LLMResponse(
+            text="",
+            model=evaluation.judge_model,
+            provider=_provider_for(evaluation.judge_model),
+            input_tokens=evaluation.judge_input_tokens,
+            output_tokens=evaluation.judge_output_tokens,
+            estimated_cost_usd=evaluation.judge_cost_usd,
+        )
+        for evaluation in evaluations
+        if evaluation.judge_model
+    ]
+
+
+def _safe_log_usage(db: Session, responses: list[LLMResponse]) -> None:
+    try:
+        UsageService(db).log_many(responses)
+    except Exception:
+        db.rollback()
+        logger.exception("Failed to record benchmark usage.")
+
+
 @app.get("/health")
 def health_check() -> dict[str, str]:
     return {"status": "ok"}
@@ -277,6 +325,8 @@ async def create_benchmark_run(
             detail="Failed to save the benchmark run.",
         ) from exc
 
+    _safe_log_usage(db, _generation_usage(results))
+
     return run_service.build_summary(run)
 
 
@@ -400,6 +450,8 @@ async def evaluate_benchmark_run(
         for record in evaluation_run.records
         if record.evaluation is not None
     ]
+
+    _safe_log_usage(db, _judge_usage(evaluations))
 
     try:
         run_service.save_evaluations(run_id, evaluations)
