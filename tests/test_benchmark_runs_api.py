@@ -20,6 +20,10 @@ from app.schemas.benchmark_result import BenchmarkResult
 MODEL = settings.gemini_model
 JUDGE = "test/judge"
 
+LOAD_QUERIES = "app.services.benchmark_service.BenchmarkService.load_queries"
+RUNNER = "app.routers.benchmark_runs.BenchmarkRunner"
+EVALUATOR = "app.routers.benchmark_runs.BenchmarkEvaluationService"
+
 QUERIES = [
     BenchmarkQuery(
         id="q1",
@@ -107,12 +111,9 @@ def stub_benchmark(monkeypatch):
     runner = MagicMock()
     runner.run_benchmark = AsyncMock(return_value=results)
 
+    monkeypatch.setattr(LOAD_QUERIES, lambda self: QUERIES)
     monkeypatch.setattr(
-        "app.main.BenchmarkService.load_queries",
-        lambda self: QUERIES,
-    )
-    monkeypatch.setattr(
-        "app.main.BenchmarkRunner",
+        RUNNER,
         lambda model_service_factory: runner,
     )
 
@@ -120,10 +121,7 @@ def stub_benchmark(monkeypatch):
 @pytest.fixture
 def evaluator(monkeypatch):
     fake = FakeEvaluator()
-    monkeypatch.setattr(
-        "app.main.BenchmarkEvaluationService",
-        lambda: fake,
-    )
+    monkeypatch.setattr(EVALUATOR, lambda: fake)
     return fake
 
 
@@ -257,10 +255,7 @@ def test_evaluate_rejects_changed_dataset(
         ),
         QUERIES[1],
     ]
-    monkeypatch.setattr(
-        "app.main.BenchmarkService.load_queries",
-        lambda self: changed,
-    )
+    monkeypatch.setattr(LOAD_QUERIES, lambda self: changed)
 
     response = client.post(f"/benchmark/runs/{run_id}/evaluate")
 

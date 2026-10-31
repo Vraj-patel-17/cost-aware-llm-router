@@ -7,8 +7,8 @@ from app.schemas.benchmark import BenchmarkQuery
 from app.schemas.benchmark_result import BenchmarkResult
 
 from app.core.config import settings
+from app.core.dependencies import get_model_service
 from app.main import app
-from app.main import get_model_service
 
 client = TestClient(app)
 
@@ -37,8 +37,8 @@ def test_generate_success(model, provider):
         "estimated_cost_usd":None
     }
 
-    with (patch("app.main.get_model_service") as mock_get_service,
-    patch("app.main.UsageService.log_usage") as mock_log_usage):
+    with (patch("app.routers.generate.get_model_service") as mock_get_service,
+    patch("app.services.usage_service.UsageService.log_usage") as mock_log_usage):
         mock_service = mock_get_service.return_value
         mock_service.generate = AsyncMock(return_value=mock_response)
 
@@ -80,7 +80,7 @@ def test_generate_rejects_empty_prompt():
 
 
 def test_generate_handles_provider_failure():
-    with patch("app.main.get_model_service") as mock_get_service:
+    with patch("app.routers.generate.get_model_service") as mock_get_service:
         mock_service = mock_get_service.return_value
         mock_service.generate = AsyncMock(
             side_effect=RuntimeError("Internal provider error")
@@ -109,7 +109,7 @@ def test_get_model_service_uses_registry(
     expected_provider,
     expected_api_key,
 ):
-    with patch("app.main.LiteLLMProvider") as mock_provider:
+    with patch("app.core.dependencies.LiteLLMProvider") as mock_provider:
         service = get_model_service(model_name)
 
     mock_provider.assert_called_once_with(
@@ -129,7 +129,7 @@ def test_analytics_summary_success():
     }
 
     with patch(
-        "app.main.AnalyticsService.get_summary",
+        "app.services.analytics_service.AnalyticsService.get_summary",
         return_value=mock_summary,
     ):
         response = client.get("/analytics/summary")
@@ -148,7 +148,7 @@ def test_analytics_summary_empty_database():
     }
 
     with patch(
-        "app.main.AnalyticsService.get_summary",
+        "app.services.analytics_service.AnalyticsService.get_summary",
         return_value=mock_summary,
     ):
         response = client.get("/analytics/summary")
@@ -179,7 +179,7 @@ def test_model_analytics_success():
     ]
 
     with patch(
-        "app.main.AnalyticsService.get_model_summary",
+        "app.services.analytics_service.AnalyticsService.get_model_summary",
         return_value=mock_results,
     ):
         response = client.get("/analytics/models")
@@ -190,7 +190,7 @@ def test_model_analytics_success():
 
 def test_model_analytics_empty_database():
     with patch(
-        "app.main.AnalyticsService.get_model_summary",
+        "app.services.analytics_service.AnalyticsService.get_model_summary",
         return_value=[],
     ):
         response = client.get("/analytics/models")
@@ -219,7 +219,7 @@ def test_run_benchmark_success(monkeypatch):
     ]
 
     monkeypatch.setattr(
-        "app.main.BenchmarkService.load_queries",
+        "app.services.benchmark_service.BenchmarkService.load_queries",
         lambda self: queries,
     )
 
@@ -227,7 +227,7 @@ def test_run_benchmark_success(monkeypatch):
     mock_runner.run_benchmark = AsyncMock(return_value=results)
 
     monkeypatch.setattr(
-        "app.main.BenchmarkRunner",
+        "app.routers.benchmark.BenchmarkRunner",
         lambda model_service_factory: mock_runner,
     )
 

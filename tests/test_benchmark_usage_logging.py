@@ -20,6 +20,10 @@ from app.schemas.benchmark_result import BenchmarkResult
 MODEL = settings.gemini_model
 JUDGE = "test/judge"
 
+LOAD_QUERIES = "app.services.benchmark_service.BenchmarkService.load_queries"
+RUNNER = "app.routers.benchmark_runs.BenchmarkRunner"
+EVALUATOR = "app.routers.benchmark_runs.BenchmarkEvaluationService"
+
 QUERIES = [
     BenchmarkQuery(
         id=f"q{i}",
@@ -27,7 +31,7 @@ QUERIES = [
         prompt=f"Prompt {i}",
         evaluation_criteria=["Criterion"],
     )
-    for i in (1, 2)
+    for i in (1, 2, 3)
 ]
 
 
@@ -70,6 +74,8 @@ def client(monkeypatch):
 
     app.dependency_overrides[get_db] = override_get_db
 
+    # q1 and q2 succeed; q3 fails. All three exist in QUERIES, because
+    # evaluation rejects results whose query is not in the dataset.
     results = [
         BenchmarkResult(
             query_id=query.id,
@@ -82,11 +88,11 @@ def client(monkeypatch):
             estimated_cost_usd=0.001,
             success=True,
         )
-        for query in QUERIES
+        for query in QUERIES[:2]
     ] + [
         BenchmarkResult(
-            query_id="q3",
-            category="simple",
+            query_id=QUERIES[2].id,
+            category=QUERIES[2].category,
             model=MODEL,
             response_text="",
             success=False,
@@ -97,18 +103,12 @@ def client(monkeypatch):
     runner = MagicMock()
     runner.run_benchmark = AsyncMock(return_value=results)
 
+    monkeypatch.setattr(LOAD_QUERIES, lambda self: QUERIES)
     monkeypatch.setattr(
-        "app.main.BenchmarkService.load_queries",
-        lambda self: QUERIES,
-    )
-    monkeypatch.setattr(
-        "app.main.BenchmarkRunner",
+        RUNNER,
         lambda model_service_factory: runner,
     )
-    monkeypatch.setattr(
-        "app.main.BenchmarkEvaluationService",
-        lambda: FakeEvaluator(),
-    )
+    monkeypatch.setattr(EVALUATOR, lambda: FakeEvaluator())
 
     yield TestClient(app)
 
@@ -129,10 +129,15 @@ def test_benchmark_run_and_judge_calls_appear_in_analytics(client):
 
     summary = client.get("/analytics/summary").json()
 
+    # Two successful generations are logged; the failed one is not.
     assert summary["total_requests"] == 2
     assert summary["total_estimated_cost_usd"] == pytest.approx(0.002)
 
-    assert client.post(f"/benchmark/runs/{run_id}/evaluate").status_code == 200
+    evaluation = client.post(f"/benchmark/runs/{run_id}/evaluate")
+
+    assert evaluation.status_code == 200
+    assert evaluation.json()["failed_generations"] == 1
+    assert evaluation.json()["evaluated_results"] == 2
 
     summary = client.get("/analytics/summary").json()
 

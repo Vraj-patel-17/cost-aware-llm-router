@@ -39,7 +39,7 @@ Planned technologies include scikit-learn for learned routing and Streamlit for 
 * Gemini and Groq integrations verified through real API calls.
 * Normalized model responses containing generated text, provider, token usage, latency, and estimated inference cost.
 * Provider-independent cost estimation using configured input and output token prices.
-* SQLite persistence for model usage records, including model, provider, token usage, latency, estimated cost, and timestamp.
+* SQLite persistence for model usage records (live requests, stored benchmark generations, and judge calls), including model, provider, token usage, latency, estimated cost, and timestamp.
 * Aggregate usage analytics through `GET /analytics/summary`.
 * Per-model usage analytics through `GET /analytics/models`.
 * A benchmark dataset containing 20 queries across four categories: simple questions, reasoning, coding, and information extraction.
@@ -64,7 +64,7 @@ Planned technologies include scikit-learn for learned routing and Streamlit for 
 * The benchmark dataset currently contains 20 queries, which is insufficient for strong general conclusions about model quality. Most queries are easy enough that capable models are likely to pass nearly all of them, so the dataset cannot yet separate models well.
 * Quality evaluation relies on an LLM judge. Its scores may be subjective or inconsistent and should not be treated as ground truth. Several criteria (sentence counts, JSON shape, exact values) could be checked programmatically instead.
 * By default the judge is the Gemini model, which is also a benchmark candidate, so scores for that model may be inflated. Set `JUDGE_MODEL` to a model that is not being benchmarked. The comparison endpoint flags self-judged models.
-* Benchmark generation and judge calls are not written to the usage table, so `/analytics` does not include benchmark traffic. Judge cost is stored with each evaluation instead.
+* Benchmark generations and judge calls made through `/benchmark/runs` are written to the usage table alongside live `/generate` traffic, so `/analytics` mixes the two. The stateless `/benchmark/run` endpoint does not log usage. Separating traffic by source needs a new column and therefore a migration.
 * A benchmark run executes inside a single HTTP request, which will become slow as the dataset grows.
 * The API has no authentication or rate limiting and should not be exposed publicly.
 * Response caching, automatic fallback and retries, a learned routing strategy, and a Streamlit dashboard have not yet been implemented.
@@ -205,7 +205,6 @@ If `JUDGE_MODEL` is a model other than the two defaults, the provider is taken f
 
 ## Project Structure
 
-```text
 app/
 ├── core/
 │   ├── config.py
@@ -218,6 +217,12 @@ app/
 │   └── benchmark_run.py
 ├── providers/
 │   └── litellm_provider.py
+├── routers/
+│   ├── health.py
+│   ├── generate.py
+│   ├── analytics.py
+│   ├── benchmark.py
+│   └── benchmark_runs.py
 ├── schemas/
 │   ├── llm.py
 │   ├── analytics.py
@@ -239,7 +244,8 @@ app/
 │   ├── benchmark_evaluation_service.py
 │   ├── benchmark_evaluation_run_service.py
 │   ├── benchmark_run_service.py
-│   └── benchmark_comparison_service.py
+│   ├── benchmark_comparison_service.py
+│   └── benchmark_usage.py
 └── main.py
 
 data/
@@ -270,7 +276,8 @@ tests/
 ├── test_benchmark_run_service.py
 ├── test_benchmark_comparison_service.py
 ├── test_benchmark_runs_api.py
-└── test_concurrency.py
+├── test_concurrency.py
+└── test_routes.py
 
 pyproject.toml
 uv.lock
