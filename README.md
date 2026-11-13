@@ -1,5 +1,7 @@
 # Cost-Aware LLM Router
 
+![CI](https://github.com/Vraj-patel-17/cost-aware-llm-router/actions/workflows/ci.yml/badge.svg)
+
 A system that routes queries to cost-effective language models while maintaining an acceptable level of response quality.
 
 ## Problem
@@ -26,6 +28,7 @@ This project explores whether intelligent model selection can reduce inference c
 * **Configuration:** Pydantic Settings
 * **Persistence:** SQLAlchemy with SQLite
 * **Testing:** pytest, pytest-asyncio
+* **CI:** GitHub Actions
 * **Dependency management:** uv
 
 Planned technologies include scikit-learn for learned routing and Streamlit for benchmark visualization.
@@ -53,6 +56,7 @@ Planned technologies include scikit-learn for learned routing and Streamlit for 
 * Structured evaluation results containing quality scores, pass/fail outcomes, criterion-level assessments, and explanations.
 * Automated tests covering API behavior, model registration, cost calculations, usage persistence, analytics aggregation, benchmark execution and concurrency, run persistence, comparison, quality evaluation, and provider timeouts.
 * Mocked provider tests that do not require live LLM API calls.
+* A GitHub Actions workflow that runs the test suite on every push to `main` and on pull requests.
 
 ## Current Limitations
 
@@ -130,6 +134,7 @@ The next major milestone is to implement and evaluate a cost-aware routing strat
 * [x] Track evaluator token usage and costs separately
 * [x] Persist benchmark runs and evaluation results
 * [x] Per-model run comparison
+* [x] Continuous integration (tests on every push and pull request)
 * [ ] Use a judge model that is not a benchmark candidate
 * [ ] Expand and validate the benchmark dataset (harder prompts, dev/test split)
 * [ ] Score objective criteria programmatically and calibrate the judge against human grading
@@ -141,7 +146,7 @@ The next major milestone is to implement and evaluate a cost-aware routing strat
 * [ ] Add authentication and rate limiting
 * [ ] Add response caching, retries, and fallback handling
 * [ ] Build a Streamlit analytics dashboard
-* [ ] Improve deployment and CI/CD
+* [ ] Improve deployment (containerization and hosting)
 
 ## API Endpoints
 
@@ -179,11 +184,12 @@ curl -X POST http://127.0.0.1:8000/benchmark/runs \
   -d '{"model_names": ["gemini/gemini-3.5-flash-lite", "groq/openai/gpt-oss-120b"]}'
 ```
 
-Evaluate the run and compare the models (use the `run_id` returned above):
+Evaluate the run and compare the models (replace `<run_id>` with the `run_id` returned above):
 
 ```bash
-curl -X POST http://127.0.0.1:8000/benchmark/runs/<run_id>/evaluate
-curl http://127.0.0.1:8000/benchmark/runs/<run_id>/comparison
+RUN_ID=<run_id>
+curl -X POST http://127.0.0.1:8000/benchmark/runs/$RUN_ID/evaluate
+curl http://127.0.0.1:8000/benchmark/runs/$RUN_ID/comparison
 ```
 
 ## Configuration
@@ -204,6 +210,11 @@ Settings are read from environment variables or a `.env` file (see `.env.example
 If `JUDGE_MODEL` is a model other than the two defaults, the provider is taken from its ID prefix (for example `gemini/...` or `groq/...`). Add its token prices to `app/core/model_pricing.py` to track judge cost.
 
 ## Project Structure
+
+```text
+.github/
+└── workflows/
+    └── ci.yml
 
 app/
 ├── core/
@@ -276,6 +287,7 @@ tests/
 ├── test_benchmark_run_service.py
 ├── test_benchmark_comparison_service.py
 ├── test_benchmark_runs_api.py
+├── test_benchmark_usage_logging.py
 ├── test_concurrency.py
 └── test_routes.py
 
