@@ -7,11 +7,29 @@ from app.schemas.benchmark import BenchmarkQuery
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATASET_PATH = PROJECT_ROOT / "data" / "benchmark_queries.json"
 EXPECTED_CATEGORIES = {"simple", "reasoning", "coding", "extraction"}
+REQUIRED_FIELDS = {
+    "id",
+    "category",
+    "prompt",
+    "evaluation_criteria",
+    "difficulty",
+    "split",
+}
 
 class BenchmarkService:
     def load_queries(self) -> list[BenchmarkQuery]:
         with DATASET_PATH.open(encoding="utf-8") as file:
             raw_queries = json.load(file)
+
+        # The schema has defaults for difficulty and split, so require them
+        # explicitly here; otherwise a forgotten label would go unnoticed.
+        for index, raw_query in enumerate(raw_queries):
+            missing = REQUIRED_FIELDS - set(raw_query)
+            if missing:
+                raise ValueError(
+                    f"Benchmark query at position {index} is missing "
+                    f"fields: {sorted(missing)}"
+                )
 
         queries = [
             BenchmarkQuery.model_validate(query)

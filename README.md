@@ -45,7 +45,7 @@ Planned technologies include scikit-learn for learned routing and Streamlit for 
 * SQLite persistence for model usage records (live requests, stored benchmark generations, and judge calls), including model, provider, token usage, latency, estimated cost, and timestamp.
 * Aggregate usage analytics through `GET /analytics/summary`.
 * Per-model usage analytics through `GET /analytics/models`.
-* A benchmark dataset containing 20 queries across four categories: simple questions, reasoning, coding, and information extraction.
+* A benchmark dataset containing 40 queries across four categories (simple, reasoning, coding, and information extraction). Each query has a difficulty label (easy, medium, hard) and a dev/test split, so routers can be built on `dev` queries and reported on held-out `test` queries.
 * Concurrent benchmark execution with a configurable concurrency limit and support for running selected models against the same query dataset.
 * Persisted benchmark runs: each run stores its models, a fingerprint of the dataset, and every generated result in SQLite, so results can be re-analyzed without new API calls.
 * Quality evaluation of stored runs through `POST /benchmark/runs/{run_id}/evaluate`. Evaluations are stored per judge model, responses already judged by the current judge are skipped, and a run cannot be evaluated if the dataset has changed since it was created.
@@ -65,7 +65,7 @@ Planned technologies include scikit-learn for learned routing and Streamlit for 
 * Configured token prices are estimates and must be rechecked when provider pricing changes.
 * Estimated costs may differ from actual charges because of free-tier allowances, discounts, provider-specific billing rules, and how each provider counts reasoning tokens.
 * Usage records and benchmark runs are stored locally in SQLite. Schema changes to existing tables will need migrations (for example Alembic); new tables are created automatically on startup.
-* The benchmark dataset currently contains 20 queries, which is insufficient for strong general conclusions about model quality. Most queries are easy enough that capable models are likely to pass nearly all of them, so the dataset cannot yet separate models well.
+* The benchmark dataset contains 40 queries (16 held out as `test`), which is still too small for strong general conclusions about model quality. Difficulty labels are a-priori estimates and should be recalibrated from measured pass rates.
 * Quality evaluation relies on an LLM judge. Its scores may be subjective or inconsistent and should not be treated as ground truth. Several criteria (sentence counts, JSON shape, exact values) could be checked programmatically instead.
 * By default the judge is the Gemini model, which is also a benchmark candidate, so scores for that model may be inflated. Set `JUDGE_MODEL` to a model that is not being benchmarked. The comparison endpoint flags self-judged models.
 * Benchmark generations and judge calls made through `/benchmark/runs` are written to the usage table alongside live `/generate` traffic, so `/analytics` mixes the two. The stateless `/benchmark/run` endpoint does not log usage. Separating traffic by source needs a new column and therefore a migration.

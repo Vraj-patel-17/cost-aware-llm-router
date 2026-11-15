@@ -2,6 +2,8 @@
     {
         "id": "simple_001",
         "category": "simple",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "Explain what an API is in exactly two sentences.",
         "evaluation_criteria": [
             "Correctly explains that an API enables software systems to communicate",
@@ -12,6 +14,8 @@
     {
         "id": "simple_002",
         "category": "simple",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "Explain the difference between a list and a tuple in Python in no more than three bullet points.",
         "evaluation_criteria": [
             "Explains that lists are mutable and tuples are immutable",
@@ -22,6 +26,8 @@
     {
         "id": "simple_003",
         "category": "simple",
+        "difficulty": "easy",
+        "split": "test",
         "prompt": "What is the purpose of version control in software development? Answer in two sentences.",
         "evaluation_criteria": [
             "Explains that version control tracks changes to files",
@@ -32,6 +38,8 @@
     {
         "id": "simple_004",
         "category": "simple",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "Explain the difference between supervised and unsupervised machine learning in simple language.",
         "evaluation_criteria": [
             "Explains that supervised learning uses labeled training data",
@@ -42,6 +50,8 @@
     {
         "id": "simple_005",
         "category": "simple",
+        "difficulty": "easy",
+        "split": "test",
         "prompt": "What does HTTP status code 404 mean? Answer in one sentence.",
         "evaluation_criteria": [
             "Correctly identifies 404 as Not Found",
@@ -50,8 +60,73 @@
         ]
     },
     {
+        "id": "simple_006",
+        "category": "simple",
+        "difficulty": "medium",
+        "split": "dev",
+        "prompt": "Explain what DNS is in exactly three sentences. The second sentence must contain the word \"cache\", and the response must not contain any commas.",
+        "evaluation_criteria": [
+            "Correctly explains that DNS translates domain names into IP addresses",
+            "Uses exactly three sentences",
+            "The second sentence contains the word \"cache\"",
+            "Contains no commas anywhere in the response"
+        ]
+    },
+    {
+        "id": "simple_007",
+        "category": "simple",
+        "difficulty": "medium",
+        "split": "test",
+        "prompt": "List exactly four HTTP methods that are used to create, replace, partially update, or delete resources. Return a numbered list with one uppercase method name per item and no other text.",
+        "evaluation_criteria": [
+            "Lists POST, PUT, PATCH and DELETE (in any order)",
+            "Contains exactly four items in a numbered list",
+            "Each item contains only the method name in uppercase",
+            "Contains no additional explanatory text"
+        ]
+    },
+    {
+        "id": "simple_008",
+        "category": "simple",
+        "difficulty": "medium",
+        "split": "dev",
+        "prompt": "In one sentence of at most 20 words, explain the main difference between TCP and UDP.",
+        "evaluation_criteria": [
+            "States that TCP is reliable or connection-oriented with ordered delivery while UDP is connectionless without delivery guarantees",
+            "Uses exactly one sentence",
+            "Uses at most 20 words"
+        ]
+    },
+    {
+        "id": "simple_009",
+        "category": "simple",
+        "difficulty": "medium",
+        "split": "dev",
+        "prompt": "Explain why 0.1 + 0.2 == 0.3 evaluates to False in Python, in no more than three sentences, and name one standard-library way to compare such values safely.",
+        "evaluation_criteria": [
+            "Explains that 0.1 and 0.2 cannot be represented exactly in binary floating point, so their sum differs slightly from 0.3",
+            "Names a standard-library approach such as math.isclose or the decimal module",
+            "Uses no more than three sentences"
+        ]
+    },
+    {
+        "id": "simple_010",
+        "category": "simple",
+        "difficulty": "hard",
+        "split": "test",
+        "prompt": "Summarize the story of the Three Little Pigs in exactly 25 words. Output only the summary.",
+        "evaluation_criteria": [
+            "The summary is exactly 25 words long",
+            "Mentions the three pigs and the wolf",
+            "Mentions that the pig with the brick house survives or the wolf fails to blow it down",
+            "Contains only the summary with no extra text"
+        ]
+    },
+    {
         "id": "reasoning_001",
         "category": "reasoning",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "A shop offers a 20% discount on an item priced at ₹500. Calculate the discount and the final price.",
         "evaluation_criteria": [
             "Calculates the discount as ₹100",
@@ -62,6 +137,8 @@
     {
         "id": "reasoning_002",
         "category": "reasoning",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "A car travels 150 km in 3 hours at a constant speed. How far will it travel in 5 hours at the same speed? Show the calculation.",
         "evaluation_criteria": [
             "Calculates the speed as 50 km/h",
@@ -72,6 +149,8 @@
     {
         "id": "reasoning_003",
         "category": "reasoning",
+        "difficulty": "easy",
+        "split": "test",
         "prompt": "A student scores 72, 85, and 93 on three equally weighted tests. Calculate the average score and show the calculation.",
         "evaluation_criteria": [
             "Adds the scores correctly to obtain 250",
@@ -82,6 +161,8 @@
     {
         "id": "reasoning_004",
         "category": "reasoning",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "A server processes 120 requests in 4 seconds at a constant rate. How many requests can it process in 15 seconds? Assume no overhead or change in processing rate.",
         "evaluation_criteria": [
             "Calculates the processing rate as 30 requests per second",
@@ -92,6 +173,8 @@
     {
         "id": "reasoning_005",
         "category": "reasoning",
+        "difficulty": "easy",
+        "split": "test",
         "prompt": "A dataset contains 80 samples. Of these, 25% belong to class A and the rest belong to class B. How many samples belong to each class?",
         "evaluation_criteria": [
             "Calculates class A as 20 samples",
@@ -100,8 +183,74 @@
         ]
     },
     {
+        "id": "reasoning_006",
+        "category": "reasoning",
+        "difficulty": "medium",
+        "split": "dev",
+        "prompt": "Pipe A can fill an empty tank in 6 hours and pipe B can fill it in 3 hours. A drain can empty a full tank in 12 hours. If A, B and the drain are all open at the same time, how long will it take to fill the empty tank? Show your work.",
+        "evaluation_criteria": [
+            "Computes the combined rate as 1/6 + 1/3 - 1/12 = 5/12 of the tank per hour",
+            "Concludes that the tank fills in 12/5 hours, which is 2.4 hours",
+            "States the time as 2 hours 24 minutes or an equivalent form",
+            "Subtracts the drain rate rather than adding it"
+        ]
+    },
+    {
+        "id": "reasoning_007",
+        "category": "reasoning",
+        "difficulty": "medium",
+        "split": "test",
+        "prompt": "A shop raises the price of an item by 25% and then offers a 20% discount on the new price. What is the net percentage change compared with the original price? Show your calculation.",
+        "evaluation_criteria": [
+            "Calculates the increased price as 1.25 times the original price",
+            "Applies the 20% discount to the increased price: 1.25 x 0.8 = 1.0",
+            "Concludes that the net change is 0% because the final price equals the original price",
+            "Does not conclude that the net change is a 5% increase"
+        ]
+    },
+    {
+        "id": "reasoning_008",
+        "category": "reasoning",
+        "difficulty": "medium",
+        "split": "dev",
+        "prompt": "Six runners (Meera, Nikhil, Omar, Priya, Qadir and Rohan) finished a race with no ties. Meera finished before Nikhil. Omar finished exactly two places after Meera. Priya finished last. Qadir finished immediately before Priya. Rohan finished before Meera. Give the full finishing order from first to sixth.",
+        "evaluation_criteria": [
+            "Gives the finishing order Rohan, Meera, Nikhil, Omar, Qadir, Priya",
+            "Places Qadir fifth and Priya sixth",
+            "Reasoning is consistent with all five clues"
+        ]
+    },
+    {
+        "id": "reasoning_009",
+        "category": "reasoning",
+        "difficulty": "hard",
+        "split": "dev",
+        "prompt": "Two fair six-sided dice are rolled. Given that at least one of the dice shows a 5, what is the probability that the sum is at least 10? Give the answer as a fraction in simplest form and as a decimal rounded to three decimal places.",
+        "evaluation_criteria": [
+            "Identifies that 11 of the 36 outcomes have at least one die showing 5",
+            "Identifies that 3 of those outcomes have a sum of at least 10: (5,5), (5,6) and (6,5)",
+            "States the probability as 3/11",
+            "Gives the decimal as approximately 0.273"
+        ]
+    },
+    {
+        "id": "reasoning_010",
+        "category": "reasoning",
+        "difficulty": "hard",
+        "split": "test",
+        "prompt": "What is the smaller angle between the hour hand and the minute hand of an analog clock at exactly 3:15? Show your calculation.",
+        "evaluation_criteria": [
+            "Places the minute hand at 90 degrees",
+            "Accounts for the hour hand having moved past the 3 position, placing it at 97.5 degrees",
+            "States the final angle as 7.5 degrees",
+            "Shows a correct calculation"
+        ]
+    },
+    {
         "id": "coding_001",
         "category": "coding",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "Write a Python function named is_prime(n) that returns True if n is a prime number and False otherwise. Handle integers less than 2 correctly.",
         "evaluation_criteria": [
             "Defines a function named is_prime",
@@ -114,6 +263,8 @@
     {
         "id": "coding_002",
         "category": "coding",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "Write a Python function named remove_duplicates(items) that removes duplicate elements from a list while preserving their original order.",
         "evaluation_criteria": [
             "Defines a function named remove_duplicates",
@@ -126,6 +277,8 @@
     {
         "id": "coding_003",
         "category": "coding",
+        "difficulty": "easy",
+        "split": "test",
         "prompt": "Write a Python function named word_frequency(text) that returns a dictionary containing the frequency of each word. Treat words case-insensitively and split words on whitespace.",
         "evaluation_criteria": [
             "Defines a function named word_frequency",
@@ -138,6 +291,8 @@
     {
         "id": "coding_004",
         "category": "coding",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "Write a Python function named binary_search(numbers, target) that searches for target in a sorted list and returns its index if found, or -1 otherwise.",
         "evaluation_criteria": [
             "Defines a function named binary_search",
@@ -150,6 +305,8 @@
     {
         "id": "coding_005",
         "category": "coding",
+        "difficulty": "easy",
+        "split": "test",
         "prompt": "Write a Python function named flatten_once(items) that flattens a list by one level. For example, [1, [2, 3], [4], 5] should become [1, 2, 3, 4, 5]. Do not recursively flatten nested lists.",
         "evaluation_criteria": [
             "Defines a function named flatten_once",
@@ -160,8 +317,83 @@
         ]
     },
     {
+        "id": "coding_006",
+        "category": "coding",
+        "difficulty": "medium",
+        "split": "dev",
+        "prompt": "Write a Python function named merge_intervals(intervals) that takes a list of [start, end] pairs, not necessarily sorted, and returns a new list of merged intervals sorted by start. Intervals that merely touch, such as [1, 2] and [2, 3], must be merged. Do not modify the input list.",
+        "evaluation_criteria": [
+            "Defines a function named merge_intervals",
+            "Sorts the intervals by start so unsorted input is handled correctly",
+            "Merges overlapping intervals and also intervals that only touch, such as [1, 2] and [2, 3]",
+            "Keeps the larger end when one interval is fully contained in another, such as [1, 10] and [2, 3]",
+            "Returns an empty list for an empty input",
+            "Does not modify the input list"
+        ]
+    },
+    {
+        "id": "coding_007",
+        "category": "coding",
+        "difficulty": "medium",
+        "split": "test",
+        "prompt": "Write a Python function named is_balanced(s) that returns True if the brackets (), [] and {} in the string s are balanced and correctly nested, and False otherwise. Ignore all other characters.",
+        "evaluation_criteria": [
+            "Defines a function named is_balanced",
+            "Supports all three bracket types: (), [] and {}",
+            "Returns False for mismatched pairs such as \"(]\"",
+            "Returns False for a closing bracket with no matching opener, such as \")(\"",
+            "Returns False when openers remain unclosed, such as \"((\"",
+            "Returns True for an empty string and ignores non-bracket characters"
+        ]
+    },
+    {
+        "id": "coding_008",
+        "category": "coding",
+        "difficulty": "hard",
+        "split": "dev",
+        "prompt": "Write a Python function named top_k_frequent(items, k) that returns a list of the k most frequent items in descending order of frequency. Ties must be broken by the order of first appearance in items. For example, top_k_frequent([\"b\", \"a\", \"b\", \"c\", \"a\"], 2) returns [\"b\", \"a\"]. If k is larger than the number of distinct items, return all distinct items. If k is 0 or items is empty, return an empty list.",
+        "evaluation_criteria": [
+            "Defines a function named top_k_frequent",
+            "Counts item frequencies correctly",
+            "Orders results by descending frequency",
+            "Breaks ties by order of first appearance in the input",
+            "Returns all distinct items when k exceeds the number of distinct items",
+            "Returns an empty list when k is 0 or the input is empty"
+        ]
+    },
+    {
+        "id": "coding_009",
+        "category": "coding",
+        "difficulty": "medium",
+        "split": "dev",
+        "prompt": "Write a Python function named roman_to_int(s) that converts a valid Roman numeral string (up to 3999) to an integer. Handle subtractive notation such as IV, IX, XL, XC, CD and CM.",
+        "evaluation_criteria": [
+            "Defines a function named roman_to_int",
+            "Maps I, V, X, L, C, D and M to 1, 5, 10, 50, 100, 500 and 1000",
+            "Handles subtractive notation correctly, so \"MCMXCIV\" returns 1994",
+            "Handles additive numerals correctly, so \"LVIII\" returns 58",
+            "Returns an integer"
+        ]
+    },
+    {
+        "id": "coding_010",
+        "category": "coding",
+        "difficulty": "hard",
+        "split": "test",
+        "prompt": "Write a Python function named longest_unique_substring(s) that returns the length of the longest substring of s without repeating characters. For example, \"abcabcbb\" returns 3. Use an efficient approach rather than checking every possible substring.",
+        "evaluation_criteria": [
+            "Defines a function named longest_unique_substring",
+            "Returns an integer length, not the substring itself",
+            "Gives correct results: \"abcabcbb\" returns 3, \"bbbbb\" returns 1 and \"pwwkew\" returns 3",
+            "Returns 0 for an empty string",
+            "Uses a sliding window or equivalent linear-time approach instead of checking all substrings"
+        ]
+    },
+    {
         "id": "extraction_001",
         "category": "extraction",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "Extract the customer name, invoice date, and total amount from this invoice text. Return only a JSON object with keys customer_name, invoice_date, and total_amount. Invoice text: Customer: Asha Mehta; Invoice Date: 2026-09-12; Subtotal: ₹2,000; Tax: ₹360; Total: ₹2,360.",
         "evaluation_criteria": [
             "Extracts customer_name as Asha Mehta",
@@ -173,6 +405,8 @@
     {
         "id": "extraction_002",
         "category": "extraction",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "Extract the person's name, email address, and phone number. Return only a JSON object with keys name, email, and phone. Text: Please contact Rahul Shah at rahul.shah@example.com or call +91-9876543210 for further information.",
         "evaluation_criteria": [
             "Extracts the name as Rahul Shah",
@@ -184,6 +418,8 @@
     {
         "id": "extraction_003",
         "category": "extraction",
+        "difficulty": "easy",
+        "split": "test",
         "prompt": "Extract the product name, quantity, and unit price from this order. Return only a JSON object with keys product_name, quantity, and unit_price. Order: Product: Wireless Mouse; Quantity: 3 units; Unit price: ₹750; Total: ₹2,250.",
         "evaluation_criteria": [
             "Extracts product_name as Wireless Mouse",
@@ -196,6 +432,8 @@
     {
         "id": "extraction_004",
         "category": "extraction",
+        "difficulty": "easy",
+        "split": "dev",
         "prompt": "Extract the meeting date, start time, and location from this message. Return only a JSON object with keys date, start_time, and location. Message: The project review meeting is scheduled for 18 November 2026 at 14:30 IST in Conference Room B.",
         "evaluation_criteria": [
             "Extracts the date as 18 November 2026",
@@ -207,12 +445,82 @@
     {
         "id": "extraction_005",
         "category": "extraction",
+        "difficulty": "easy",
+        "split": "test",
         "prompt": "Extract the company name, job title, and application deadline from this job announcement. Return only a JSON object with keys company_name, job_title, and application_deadline. Announcement: Acme Analytics is hiring a Junior Data Scientist. Applications must be submitted by 30 November 2026.",
         "evaluation_criteria": [
             "Extracts company_name as Acme Analytics",
             "Extracts job_title as Junior Data Scientist",
             "Extracts application_deadline as 30 November 2026",
             "Returns valid JSON with exactly the three requested keys"
+        ]
+    },
+    {
+        "id": "extraction_006",
+        "category": "extraction",
+        "difficulty": "medium",
+        "split": "dev",
+        "prompt": "Extract every complete email address from the text below. Return only a JSON array of strings in order of appearance. Text: Reach us at sales@acme.com, support@acme.com or billing@acme.co.in. Our office opens @ 9am on weekdays.",
+        "evaluation_criteria": [
+            "Includes sales@acme.com",
+            "Includes support@acme.com",
+            "Includes billing@acme.co.in",
+            "Does not include \"@ 9am\" or any other fragment that is not a complete email address",
+            "Returns only a valid JSON array of exactly three strings in order of appearance"
+        ]
+    },
+    {
+        "id": "extraction_007",
+        "category": "extraction",
+        "difficulty": "hard",
+        "split": "test",
+        "prompt": "Extract every date from the text below and convert each one to ISO 8601 format (YYYY-MM-DD). Return only a JSON array of strings in order of appearance. Dates written as numbers use day/month/year order. Text: The contract was signed on 3 March 2026, the first payment is due 15/04/2026, and the project ends on December 1, 2026.",
+        "evaluation_criteria": [
+            "The first item is 2026-03-03",
+            "The second item is 2026-04-15",
+            "The third item is 2026-12-01",
+            "Returns only a valid JSON array with exactly three items"
+        ]
+    },
+    {
+        "id": "extraction_008",
+        "category": "extraction",
+        "difficulty": "hard",
+        "split": "dev",
+        "prompt": "Extract the order details from the text below. Return only a JSON object with keys order_id (a string, without the # symbol), customer (an object with keys name and city), and items (an array of objects with keys sku as a string and quantity as an integer). Text: Order #A-1042 for Meera Iyer of Pune includes 2 units of SKU-77 and 5 units of SKU-12.",
+        "evaluation_criteria": [
+            "order_id is \"A-1042\" without the # symbol",
+            "customer is an object with name \"Meera Iyer\" and city \"Pune\"",
+            "items contains two objects in order: sku \"SKU-77\" with quantity 2, then sku \"SKU-12\" with quantity 5",
+            "quantity values are integers, not strings",
+            "Returns only valid JSON with exactly the requested structure"
+        ]
+    },
+    {
+        "id": "extraction_009",
+        "category": "extraction",
+        "difficulty": "medium",
+        "split": "dev",
+        "prompt": "Extract the delivery date, tracking number, and shipping cost in rupees from the text below. Return only a JSON object with keys delivery_date (YYYY-MM-DD), tracking_number, and shipping_cost_inr (a number with no currency symbol). Text: Order 88213 shipped on 2026-11-02 via BlueExpress. Tracking: BX9921047IN. Estimated delivery 2026-11-06. Shipping cost: ₹149 (inclusive of ₹23 tax).",
+        "evaluation_criteria": [
+            "delivery_date is 2026-11-06, the estimated delivery date, not the shipping date",
+            "tracking_number is BX9921047IN",
+            "shipping_cost_inr is 149, not 23",
+            "shipping_cost_inr is a number without the ₹ symbol",
+            "Returns only valid JSON with exactly the three requested keys"
+        ]
+    },
+    {
+        "id": "extraction_010",
+        "category": "extraction",
+        "difficulty": "hard",
+        "split": "test",
+        "prompt": "Extract the final meeting time and room from the message below, using corrected values where the message corrects an earlier detail. Return only a JSON object with keys time (HH:MM, 24-hour) and room. Message: The review is at 10:00 in Room 4. Update: it has moved to 11:30, and Room 4 is unavailable so we will use Room 7.",
+        "evaluation_criteria": [
+            "time is 11:30, the corrected value, not 10:00",
+            "room is Room 7, the corrected value, not Room 4",
+            "time uses the HH:MM 24-hour format",
+            "Returns only valid JSON with exactly the two requested keys"
         ]
     }
 ]
